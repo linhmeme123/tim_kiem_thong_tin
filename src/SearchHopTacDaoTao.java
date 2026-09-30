@@ -25,6 +25,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.search.similarities.BM25Similarity;//thêm import cho BM25Similarity
 
 public class SearchHopTacDaoTao {
 
@@ -49,7 +50,8 @@ public class SearchHopTacDaoTao {
     private static int taoChiMuc(Path thuMucDuLieu, Analyzer analyzer) throws Exception {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        config.setSimilarity(new ClassicSimilarity());
+        // config.setSimilarity(new ClassicSimilarity());//tạo chỉ mục bằng TF-IDF
+        config.setSimilarity(new BM25Similarity());
         int count = 0;
 
         try (Directory directory = FSDirectory.open(INDEX_DIR);
@@ -77,7 +79,8 @@ public class SearchHopTacDaoTao {
         try (Directory directory = FSDirectory.open(INDEX_DIR);
              DirectoryReader reader = DirectoryReader.open(directory)) {
             IndexSearcher searcher = new IndexSearcher(reader);
-            searcher.setSimilarity(new ClassicSimilarity());//Chấm điểm bằng TF-IDF
+            // searcher.setSimilarity(new ClassicSimilarity());//Chấm điểm bằng TF-IDF
+            searcher.setSimilarity(new BM25Similarity());//chấm điểm bằng MB25
 
             QueryParser parser = new QueryParser("content", analyzer);//tìm trong field content của các document trong index dòng analyzer
             parser.setDefaultOperator(QueryParser.Operator.OR);//các từ được nối bằng OR
@@ -108,4 +111,3 @@ public class SearchHopTacDaoTao {
         }
     }
 }
-
